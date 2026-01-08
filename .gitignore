@@ -1,0 +1,182 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+venv/
+env/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ============================================
+# DATA FILES (Large datasets)
+# ============================================
+# Raw GPS data folders
+1to19nov/
+20to24nov/
+zip/
+
+# Training data CSVs
+training_data.csv
+training_data_1week.csv
+training_enhanced_1week.csv
+training_full_18days_parallel.csv
+training_batch1.csv
+test_training_data.csv
+schedule_adherence_analysis.csv
+
+# ============================================
+# TRAINED MODELS (Large binary files)
+# ============================================
+# Model files
+*.pt
+*.pkl
+*.json
+*.txt
+*.cbm
+bus_graphs_full.pt
+tgat_best.pt
+tgat_best_normalized.pt
+tgat_best_random.pt
+ensemble_model.pkl
+optimized_ensemble_final.pkl
+eta_model.pkl
+eta_model_mlp.pkl
+xgboost_model.json
+xgboost_optimized.json
+xgboost_optimized_final.json
+xgboost_advanced.json
+lightgbm_model.txt
+lightgbm_optimized_final.txt
+catboost_optimized_final.cbm
+scalers.pkl
+scalers_random.pkl
+advanced_scaler.pkl
+xgb_scaler.pkl
+lgb_scaler.pkl
+
+# ============================================
+# VALIDATION & RESULTS
+# ============================================
+# Validation outputs
+validation_results_*.csv
+validation_metrics_*.txt
+validation_visualization_*.png
+quick_validation_results.csv
+quick_validation_timing.csv
+quick_validation_performance.png
+
+# Ray Tune results
+ray_results/
+ray_tune_multi_objective_results.pkl
+catboost_info/
+
+# Training logs
+training_log.txt
+
+# ============================================
+# TEMPORARY & INTERMEDIATE FILES
+# ============================================
+# Temporary markdown files (keep only main README.md)
+EDA_SECTION.md
+SCHEDULE_ADHERENCE_SECTION.md
+DELAY_VS_SPEED_SECTION.md
+EDA_ADDED_SUMMARY.md
+ALL_EDA_COMPLETE.md
+FINAL_README_COMPLETE.md
+PRESENTATION_READY.md
+email_draft.txt
+
+# Old/redundant documentation
+M4_PRO_OPTIMIZED.md
+PARALLEL_TRAINING.md
+PRIORITY1_COMPLETE.md
+PRIORITY2_3_COMPLETE.md
+QUICKSTART.md
+QUICK_WINS_COMPLETE.md
+TRAINING_SUCCESS.md
+TRAIN_PARALLEL_UPDATES.md
+EDA_Report.md
+data_sampling_strategy.md
+preprocessing.md
+plan.md
+project_summary.md
+
+# Evaluation plots (keep only EDA plots in root)
+model_evaluation_mlp.png
+optimized_ensemble_results.png
+
+# ============================================
+# API FOLDER - Keep only essentials
+# ============================================
+# API validation outputs (already in .gitignore patterns above)
+api/validation_results_*.csv
+api/validation_metrics_*.txt
+api/validation_visualization_*.png
+api/quick_validation_results.csv
+api/quick_validation_timing.csv
+api/quick_validation_performance.png
+
+# API logs
+api/logs/
+
+# API models (keep source code only)
+api/*.pt
+api/*.pkl
+api/*.json
+api/*.txt
+api/ensemble_model.pkl
+api/tgat_best_random.pt
+api/xgboost_model.json
+api/lightgbm_model.txt
+
+# ============================================
+# NOTEBOOKS - Keep test.ipynb and api_test.ipynb
+# ============================================
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+
+# ============================================
+# KEEP THESE FILES (explicitly not ignored)
+# ============================================
+# Root README
+!README.md
+
+# API README
+!api/README.md
+
+# Main notebooks
+!test.ipynb
+!api/api_test.ipynb
+
+# Source code
+!*.py
+
+# Configuration
+!pyproject.toml
+!uv.lock
+!api/requirements.txt
+!api/Dockerfile
+!api/.dockerignore
+
+# Documentation (selective)
+!api/DEPLOYMENT.md
+!api/VALIDATION.md
+
+# EDA visualizations (keep in root)
+!eda_*.png
+
+# Bus stops data
+!bus_stops_iitm.csv
