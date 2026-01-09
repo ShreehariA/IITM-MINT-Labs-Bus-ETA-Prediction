@@ -72,7 +72,6 @@ lgb_scaler.pkl
 # Validation outputs
 validation_results_*.csv
 validation_metrics_*.txt
-validation_visualization_*.png
 quick_validation_results.csv
 quick_validation_timing.csv
 quick_validation_performance.png
