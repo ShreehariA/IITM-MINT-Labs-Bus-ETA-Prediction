@@ -256,7 +256,7 @@ mint/
 ## 📊 Visualizations
 
 ### 1. Validation Results
-![Validation Visualization](api/validation_visualization_20260105_044551.png)
+![Validation Visualization](images/validation_visualization_20260105_044551.png)
 
 **What it shows:**
 - **Top Left**: Predicted vs Actual ETA scatter plot
@@ -286,7 +286,7 @@ mint/
   - 90% within 5 minutes
 
 ### 2. Performance Analysis
-![Performance Visualization](api/quick_validation_performance.png)
+![Performance Visualization](images/quick_validation_performance.png)
 
 **What it shows:**
 - **Processing Time Distribution**: Most predictions <1ms
@@ -567,13 +567,63 @@ The stacking ensemble was trained using Ridge Regression as the meta-learner to 
 | **LightGBM Only** | 2.53 | 4.99 | 53.1% | 71.9% | 86.5% |
 | **🌟 Stacking Ensemble** | **1.56** | **3.80** | **69.7%** | **84.2%** | **93.2%** |
 
+**Ensemble Training Output:**
+```
+================================================================================
+BUILDING STACKING ENSEMBLE
+================================================================================
+
+📂 Loading trained models...
+[LightGBM] [Debug] Skipped header "tree" in file lightgbm_model.txt
+[LightGBM] [Debug] Time for loading model: 0.006229 seconds
+  ✓ All models loaded!
+
+📂 Loading graph dataset...
+
+🔮 Generating base model predictions...
+  Predicting train...
+  Predicting val...
+  Predicting test...
+
+🧠 Training meta-learner...
+  Meta-model weights:
+    GNN:      0.000
+    XGBoost:  1.522
+    LightGBM: -0.507
+    Intercept: -27.7
+
+📊 Evaluating Stacking Ensemble...
+
+================================================================================
+COMPARISON: Individual Models vs Ensemble
+================================================================================
+
+🔷 GNN Only:
+  MAE:  185.84 minutes | RMSE: 405.18 minutes
+  ±1 min: 0.0% | ±2 min: 0.0% | ±5 min: 0.0%
+
+🔶 XGBoost Only:
+  MAE:  1.74 minutes | RMSE: 3.93 minutes
+  ±1 min: 64.3% | ±2 min: 82.3% | ±5 min: 92.5%
+
+🔷 LightGBM Only:
+  MAE:  2.53 minutes | RMSE: 4.99 minutes
+  ±1 min: 53.1% | ±2 min: 71.9% | ±5 min: 86.5%
+
+🌟 STACKING ENSEMBLE:
+  MAE:  1.56 minutes | RMSE: 3.80 minutes
+  ±1 min: 69.7% | ±2 min: 84.2% | ±5 min: 93.2%
+
+================================================================================
+✅ ENSEMBLE COMPLETE!
+================================================================================
+```
+
 **Key Findings:**
 - ✅ Ensemble achieves **10% improvement** over best single model (XGBoost)
 - ✅ **93.2% accuracy within ±5 minutes** on test set
 - ✅ GNN underperformed due to limited training data (18 days)
 - ✅ Meta-learner learned optimal weights: XGB=1.522, LGB=-0.507, GNN=0.000
-
-![Model Evaluation](model_evaluation.png)
 
 *Figure 1: Training performance comparison showing ensemble superiority over individual models*
 
@@ -614,7 +664,7 @@ The analysis revealed critical patterns that directly influenced our model desig
 ### EDA Visualizations
 
 #### Figure 4: Bus Stop Spatial Distribution
-![Bus Stops Map](eda_bus_stops_map.png)
+![Bus Stops Map](images/eda_bus_stops_map.png)
 
 **What it shows**: Geographic distribution of 178 identified bus stops across IIT Madras campus (2km² area). Bubble size indicates visit frequency, with major hubs like Main Gate (#40: 387 visits) and hostel zones (#7, #13, #16) showing highest activity.
 
@@ -627,7 +677,7 @@ The analysis revealed critical patterns that directly influenced our model desig
 ---
 
 #### Figure 5: Speed Distribution Analysis
-![Speed Distribution](eda_speed_distribution.png)
+![Speed Distribution](images/eda_speed_distribution.png)
 
 **What it shows**: Highly skewed distribution with 54.3% of GPS points at 0 km/h (stationary). Mean speed is only 11 km/h, with occasional peaks up to 40 km/h.
 
@@ -641,7 +691,7 @@ The analysis revealed critical patterns that directly influenced our model desig
 ---
 
 #### Figure 6: Temporal Speed Patterns
-![Speed by Hour](eda_speed_by_hour.png)
+![Speed by Hour](images/eda_speed_by_hour.png)
 
 **What it shows**: Average speed varies significantly by hour of day. Lowest speeds during early morning (0-4 AM: ~5 km/h) and late night (22-24: ~6 km/h). Peak speeds during academic hours (6 AM - 6 PM: ~12-13 km/h) with high variance (±15 km/h).
 
@@ -655,7 +705,7 @@ The analysis revealed critical patterns that directly influenced our model desig
 ---
 
 #### Figure 7: Movement State Distribution
-![Stationary vs Moving](eda_stationary_vs_moving.png)
+![Stationary vs Moving](images/eda_stationary_vs_moving.png)
 
 **What it shows**: 54.3% of GPS points show zero speed (stationary), while 45.7% show movement. This near 50-50 split indicates buses spend equal time stopped and moving.
 
@@ -669,7 +719,7 @@ The analysis revealed critical patterns that directly influenced our model desig
 ---
 
 #### Figure 8: Schedule Adherence Analysis
-![Schedule Adherence](eda_schedule_adherence.png)
+![Schedule Adherence](images/eda_schedule_adherence.png)
 
 **What it shows**: Distribution of delays relative to schedule. Median delay is **-10.7 minutes** (buses run early), mean is +76.2 minutes (skewed by extreme delays). Most buses cluster near on-time with long tail of delays.
 
@@ -705,7 +755,7 @@ The exploratory analysis directly influenced our technical approach:
 Further analysis of schedule adherence patterns revealed critical insights for prediction model design:
 
 #### Figure 9: Delay Patterns by Hour
-![Delay by Hour](eda_delay_by_hour.png)
+![Delay by Hour](images/eda_delay_by_hour.png)
 
 **What it shows**: Average delay varies dramatically by hour. Early morning (6 AM) shows +1200 min delays, mid-day (10 AM) shows -600 min (very early), afternoon (3 PM) shows +600 min delays. High variance throughout the day (±1000-2000 min bands).
 
@@ -719,7 +769,7 @@ Further analysis of schedule adherence patterns revealed critical insights for p
 ---
 
 #### Figure 10: Delay by Route
-![Delay by Route](eda_delay_by_route.png)
+![Delay by Route](images/eda_delay_by_route.png)
 
 **What it shows**: Massive asymmetry between routes. Hostel → Main Gate shows ~250 min average delay, while Main Gate → Hostel shows only ~35 min delay. This 7x difference is critical.
 
@@ -733,7 +783,7 @@ Further analysis of schedule adherence patterns revealed critical insights for p
 ---
 
 #### Figure 11: Delay Accumulation Along Routes
-![Delay Accumulation](eda_delay_accumulation.png)
+![Delay Accumulation](images/eda_delay_accumulation.png)
 
 **What it shows**: Delay accumulates non-linearly along route. Hostel → Main Gate (blue) shows spike to 900 min at stop 12, then drops. Main Gate → Hostel (orange) shows more stable pattern with peak at 220 min.
 
@@ -747,7 +797,7 @@ Further analysis of schedule adherence patterns revealed critical insights for p
 ---
 
 #### Figure 12: On-Time Performance by Route
-![On-Time Performance](eda_ontime_performance.png)
+![On-Time Performance](images/eda_ontime_performance.png)
 
 **What it shows**: Stacked bar chart showing early/on-time/late distribution. Both routes show ~55% early (blue), ~5% on-time (green), ~40% late (red). Very few buses actually arrive on-time (±3 min).
 
@@ -761,7 +811,7 @@ Further analysis of schedule adherence patterns revealed critical insights for p
 ---
 
 #### Figure 13: Peak vs Off-Peak Performance
-![Peak vs Off-Peak](eda_peak_vs_offpeak.png)
+![Peak vs Off-Peak](images/eda_peak_vs_offpeak.png)
 
 **What it shows**: Box plot comparing delays. Off-peak shows tight distribution near 0 (median ~0 min, range ±900 min). Peak hours show positive delays (median ~150 min, range ±1200 min) with many outliers.
 
@@ -799,7 +849,7 @@ Integrating all EDA findings:
 ---
 
 #### Figure 14: Delay vs Speed Correlation
-![Delay vs Speed](eda_delay_vs_speed.png)
+![Delay vs Speed](images/eda_delay_vs_speed.png)
 
 **What it shows**: Scatter plot of delay vs average trip speed, colored by hour of day. Most points cluster at low speeds (0-3 km/h) with high delay variance (±6000 min). Interesting patterns:
 - **Low speed (0-2 km/h)**: Extreme delay spread (±6000 min), mostly early morning (yellow) and evening (green)
