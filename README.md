@@ -756,64 +756,6 @@ This work is inspired by the paper:
 
 ---
 
-### Real-Time Preprocessing
-
-For production API, preprocessing is optimized for single GPS points:
-
-**Input**: Single GPS point
-```python
-{
-    'latitude': 13.0123,
-    'longitude': 80.2345,
-    'speed': 25,
-    'timestamp': '2026-01-09T10:30:00'
-}
-```
-
-**Output**: 53-feature vector ready for prediction
-
-**Latency**: <0.1ms (feature extraction only, excluding model inference)
-
-**Key Optimizations:**
-- No sliding window needed (stateless)
-- Precomputed stop distances
-- Cached route information
-- Vectorized distance calculations
-
----
-
-## 📈 Results & Validation
-
-### Accuracy Metrics
-
-| Metric | Value | Industry Benchmark |
-|--------|-------|-------------------|
-| **MAE** | **1.88 min** | <2 min (✅ PASS) |
-| **RMSE** | **3.87 min** | <5 min (✅ PASS) |
-| **±1 min accuracy** | 60.9% | >60% (✅ PASS) |
-| **±2 min accuracy** | **78.8%** | >75% (✅ PASS) |
-| **±5 min accuracy** | **89.3%** | >85% (✅ PASS) |
-
-### Performance Metrics
-
-| Metric | Value | Target |
-|--------|-------|--------|
-| **Prediction Latency** | **0.6ms** | <50ms (✅ PASS) |
-| **Model Load Time** | 0.15s | <1s (✅ PASS) |
-| **Throughput** | 1,667 pred/sec | >100 pred/sec (✅ PASS) |
-| **Memory Usage** | ~50MB | <500MB (✅ PASS) |
-
-### Production Readiness
-
-| Check | Status | Details |
-|-------|--------|---------|
-| **Input Validation** | ✅ PASS | Rejects (0,0) and out-of-bounds GPS |
-| **Output Bounds** | ✅ PASS | Caps at 30 minutes max |
-| **Error Handling** | ✅ PASS | 3-tier fallback strategy |
-| **Logging** | ✅ PASS | Structured JSON logs |
-| **Monitoring** | ✅ PASS | Confidence scores + method tracking |
-| **Scalability** | ✅ PASS | Docker containerized |
-
 ## 🎯 Model Training Results
 
 ### Ensemble Performance Comparison
@@ -901,6 +843,38 @@ After deployment to production API, the model was validated on completely unseen
 | **±2 min** | 84.2% | **78.8%** | -5.4% |
 | **±5 min** | 93.2% | **89.3%** | -3.9% |
 
+## 📈 Results & Validation
+
+### Accuracy Metrics
+
+| Metric | Value | Industry Benchmark |
+|--------|-------|-------------------|
+| **MAE** | **1.88 min** | <2 min (✅ PASS) |
+| **RMSE** | **3.87 min** | <5 min (✅ PASS) |
+| **±1 min accuracy** | 60.9% | >60% (✅ PASS) |
+| **±2 min accuracy** | **78.8%** | >75% (✅ PASS) |
+| **±5 min accuracy** | **89.3%** | >85% (✅ PASS) |
+
+### Performance Metrics
+
+| Metric | Value | Target |
+|--------|-------|--------|
+| **Prediction Latency** | **0.6ms** | <50ms (✅ PASS) |
+| **Model Load Time** | 0.15s | <1s (✅ PASS) |
+| **Throughput** | 1,667 pred/sec | >100 pred/sec (✅ PASS) |
+| **Memory Usage** | ~50MB | <500MB (✅ PASS) |
+
+### Production Readiness
+
+| Check | Status | Details |
+|-------|--------|---------|
+| **Input Validation** | ✅ PASS | Rejects (0,0) and out-of-bounds GPS |
+| **Output Bounds** | ✅ PASS | Caps at 30 minutes max |
+| **Error Handling** | ✅ PASS | 3-tier fallback strategy |
+| **Logging** | ✅ PASS | Structured JSON logs |
+| **Monitoring** | ✅ PASS | Confidence scores + method tracking |
+| **Scalability** | ✅ PASS | Docker containerized |
+
 **Analysis:**
 - ✅ **Minimal degradation** on unseen data (±0.32 min MAE)
 - ✅ **78.8% ±2 min accuracy** exceeds production threshold (75%)
@@ -949,6 +923,32 @@ After deployment to production API, the model was validated on completely unseen
 - **ETA Distribution**: Centered around 16 minutes (typical campus commute)
 - **Speed Analysis**: Validates realistic bus speeds (0-60 km/h)
 - **Per-IMEI Performance**: Consistent across all buses
+
+---
+
+### Real-Time Preprocessing
+
+For production API, preprocessing is optimized for single GPS points:
+
+**Input**: Single GPS point
+```python
+{
+    'latitude': 13.0123,
+    'longitude': 80.2345,
+    'speed': 25,
+    'timestamp': '2026-01-09T10:30:00'
+}
+```
+
+**Output**: 53-feature vector ready for prediction
+
+**Latency**: <0.1ms (feature extraction only, excluding model inference)
+
+**Key Optimizations:**
+- No sliding window needed (stateless)
+- Precomputed stop distances
+- Cached route information
+- Vectorized distance calculations
 
 ---
 
