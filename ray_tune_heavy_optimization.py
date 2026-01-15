@@ -1,7 +1,7 @@
 """
-MAXIMUM HEAVY Ray Tune Multi-Objective Optimization
+MAXIMUM HEAVY Ray Tune RMSE Optimization
 Parallel hyperparameter search using all CPU cores
-Goal: Push all metrics to their maximum potential!
+Goal: Minimize RMSE to reduce outliers and improve worst-case performance!
 """
 import torch
 import numpy as np
@@ -12,6 +12,7 @@ from catboost import CatBoostRegressor
 from sklearn.linear_model import Ridge, Lasso, ElasticNet
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import mean_squared_error, mean_absolute_error
 from ray import tune, air
 from ray.tune.schedulers import ASHAScheduler
 from ray.tune.search.optuna import OptunaSearch
@@ -19,8 +20,8 @@ import warnings
 warnings.filterwarnings('ignore')
 
 print("="*80)
-print("RAY TUNE MAXIMUM HEAVY MULTI-OBJECTIVE OPTIMIZATION")
-print("Goal: Push ALL metrics to their MAXIMUM potential!")
+print("RAY TUNE MAXIMUM HEAVY RMSE OPTIMIZATION")
+print("Goal: Minimize RMSE to reduce outliers and improve worst-case performance!")
 print("="*80)
 
 # Load and prepare data
@@ -190,19 +191,25 @@ def train_ensemble(config):
     # Predict on validation
     val_ensemble_pred = meta_model.predict(X_val_meta)
     
-    # Calculate ALL three accuracy metrics
+    # Calculate RMSE (primary metric - penalizes outliers heavily)
+    rmse = np.sqrt(mean_squared_error(y_val, val_ensemble_pred))
+    
+    # Also calculate MAE and accuracy metrics for monitoring
+    mae = mean_absolute_error(y_val, val_ensemble_pred)
     errors = np.abs(y_val - val_ensemble_pred)
     acc_1min = (errors <= 60).mean() * 100
     acc_2min = (errors <= 120).mean() * 100
     acc_5min = (errors <= 300).mean() * 100
     
-    # Multi-objective score with balanced weights
-    score = (0.3 * acc_1min +   # 30% weight on ±1min
-             0.3 * acc_2min +   # 30% weight on ±2min
-             0.4 * acc_5min)    # 40% weight on ±5min
+    # Primary optimization metric: Minimize RMSE
+    # Lower RMSE = better (penalizes large errors)
+    # We return negative RMSE so Ray Tune can maximize it
+    score = -rmse  # Negative because Ray Tune maximizes
     
     return {
-        "score": score,
+        "score": score,  # Negative RMSE (to maximize)
+        "rmse": rmse,    # Actual RMSE value
+        "mae": mae,      # MAE for comparison
         "acc_1min": acc_1min,
         "acc_2min": acc_2min,
         "acc_5min": acc_5min
@@ -317,27 +324,29 @@ print("\n" + "="*80)
 print("BEST CONFIGURATION FOUND")
 print("="*80)
 
-print(f"\n✅ Best multi-objective score: {best_metrics['score']:.2f}")
-print(f"\n📊 Best trial metrics:")
-print(f"  ±1 min: {best_metrics['acc_1min']:.1f}%")
-print(f"  ±2 min: {best_metrics['acc_2min']:.1f}%")
-print(f"  ±5 min: {best_metrics['acc_5min']:.1f}%")
+print(f"\n🎯 Best RMSE: {best_metrics['rmse']:.2f} seconds ({best_metrics['rmse']/60:.2f} minutes)")
+print(f"🎯 Best MAE:  {best_metrics['mae']:.2f} seconds ({best_metrics['mae']/60:.2f} minutes)")
+
+print(f"\n📊 Best Trial Accuracy Metrics:")
+print(f"  ✅ ±1 minute:  {best_metrics['acc_1min']:.1f}%")
+print(f"  ✅ ±2 minutes: {best_metrics['acc_2min']:.1f}%")
+print(f"  ✅ ±5 minutes: {best_metrics['acc_5min']:.1f}%")
 
 # Analyze top 10 trials
-print("\n📋 Top 10 trials:")
-print(f"{'Rank':<6} {'±1min':<8} {'±2min':<8} {'±5min':<8} {'Score':<8}")
-print("-" * 42)
+print("\n📋 Top 10 trials (sorted by RMSE):")
+print(f"{'Rank':<6} {'RMSE(min)':<12} {'MAE(min)':<12} {'±1min':<8} {'±2min':<8} {'±5min':<8}")
+print("-" * 62)
 
 df = results.get_dataframe()
-df_sorted = df.sort_values('score', ascending=False).head(10)
+df_sorted = df.sort_values('score', ascending=False).head(10)  # Higher score = lower RMSE
 for i, (idx, row) in enumerate(df_sorted.iterrows()):
-    if 'acc_1min' in row and 'acc_2min' in row and 'acc_5min' in row:
-        print(f"{i+1:<6} {row['acc_1min']:<8.1f} {row['acc_2min']:<8.1f} "
-              f"{row['acc_5min']:<8.1f} {row['score']:<8.2f}")
+    if 'rmse' in row and 'mae' in row:
+        print(f"{i+1:<6} {row['rmse']/60:<12.2f} {row['mae']/60:<12.2f} "
+              f"{row['acc_1min']:<8.1f} {row['acc_2min']:<8.1f} {row['acc_5min']:<8.1f}")
 
 # Save results
 print("\n💾 Saving results...")
-with open('ray_tune_multi_objective_results.pkl', 'wb') as f:
+with open('ray_tune_rmse_optimization_results.pkl', 'wb') as f:
     pickle.dump({
         'best_config': best_config,
         'best_metrics': best_metrics,
